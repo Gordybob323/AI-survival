@@ -18,31 +18,31 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       padding: 20px;
       background: radial-gradient(ellipse at center, #0f172a 0%, #05080f 75%);
-      z-index: 40;
+      z-index: 50;
       transition: opacity 0.35s;
     }
     .screen.hidden { opacity: 0; pointer-events: none; }
     h1 {
-      font-size: 2.7rem; font-weight: 800; letter-spacing: -1px;
+      font-size: 2.6rem; font-weight: 800; letter-spacing: -1px;
       background: linear-gradient(90deg, #22d3ee, #818cf8);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       margin-bottom: 6px;
     }
-    .subtitle { color: #64748b; margin-bottom: 26px; font-size: 1.05rem; }
+    .subtitle { color: #64748b; margin-bottom: 22px; font-size: 1.05rem; }
     .map-card {
       background: rgba(15,23,42,0.9); border: 1px solid #1e293b;
-      border-radius: 14px; padding: 16px 24px; margin-bottom: 26px;
+      border-radius: 14px; padding: 14px 22px; margin-bottom: 22px;
       text-align: center; max-width: 440px; width: 100%;
     }
-    .map-name { font-size: 1.25rem; font-weight: 700; color: #38bdf8; }
-    .map-desc { font-size: 0.88rem; color: #94a3b8; margin-top: 4px; }
+    .map-name { font-size: 1.2rem; font-weight: 700; color: #38bdf8; }
+    .map-desc { font-size: 0.85rem; color: #94a3b8; margin-top: 3px; }
     .chars {
       display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
-      margin-bottom: 28px; max-width: 720px;
+      margin-bottom: 24px; max-width: 720px;
     }
     .char-card {
       background: #0f172a; border: 2px solid #1e293b; border-radius: 14px;
-      padding: 14px; width: 148px; cursor: pointer; transition: all 0.2s; text-align: center;
+      padding: 13px; width: 145px; cursor: pointer; transition: all 0.2s; text-align: center;
     }
     .char-card:hover { border-color: #334155; transform: translateY(-3px); }
     .char-card.selected {
@@ -50,15 +50,15 @@
       box-shadow: 0 0 18px rgba(34,211,238,0.18);
     }
     .char-icon {
-      width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 8px;
-      display: flex; align-items: center; justify-content: center; font-size: 1.5rem;
+      width: 50px; height: 50px; border-radius: 50%; margin: 0 auto 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.45rem;
     }
-    .char-name { font-weight: 700; font-size: 1.05rem; }
-    .char-role { font-size: 0.75rem; color: #64748b; margin: 2px 0 6px; }
-    .char-stats { font-size: 0.76rem; color: #94a3b8; line-height: 1.35; }
+    .char-name { font-weight: 700; font-size: 1.02rem; }
+    .char-role { font-size: 0.74rem; color: #64748b; margin: 2px 0 6px; }
+    .char-stats { font-size: 0.74rem; color: #94a3b8; line-height: 1.35; }
     .btn {
       background: linear-gradient(135deg, #0ea5e9, #6366f1); color: white;
-      border: none; padding: 15px 46px; font-size: 1.1rem; font-weight: 700;
+      border: none; padding: 14px 42px; font-size: 1.1rem; font-weight: 700;
       border-radius: 12px; cursor: pointer;
       box-shadow: 0 4px 22px rgba(14,165,233,0.35); transition: 0.15s;
     }
@@ -78,22 +78,38 @@
     }
     .stat span { color: #22d3ee; }
     #message {
-      position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%);
+      position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%);
       background: rgba(15,23,42,0.95); border: 1px solid #334155;
       padding: 9px 20px; border-radius: 10px; font-weight: 600;
       opacity: 0; transition: opacity 0.3s; z-index: 15; pointer-events: none;
+      white-space: nowrap;
     }
     #message.show { opacity: 1; }
+    #extract-ui {
+      position: absolute; bottom: 140px; left: 50%; transform: translateX(-50%);
+      background: rgba(15,23,42,0.95); border: 1px solid #38bdf8;
+      padding: 12px 20px; border-radius: 12px; z-index: 16;
+      display: none; flex-direction: column; align-items: center; gap: 8px;
+      min-width: 220px;
+    }
+    #extract-ui.show { display: flex; }
+    .extract-bar-bg {
+      width: 180px; height: 10px; background: #1e293b; border-radius: 6px; overflow: hidden;
+    }
+    .extract-bar {
+      height: 100%; width: 0%; background: linear-gradient(90deg, #22d3ee, #38bdf8);
+      transition: width 0.05s linear;
+    }
     canvas { display: block; width: 100%; height: 100%; background: #0b1120; }
   </style>
 </head>
 <body>
   <div id="menu" class="screen">
     <h1>ARC EXTRACT</h1>
-    <p class="subtitle">Select your operative</p>
+    <p class="subtitle">Select operative • Call extract • Survive</p>
     <div class="map-card">
       <div class="map-name">SECTOR 9 — ORBITAL RELAY</div>
-      <div class="map-desc">Abandoned research complex • Heavy machine presence • Multiple extract points</div>
+      <div class="map-desc">Abandoned complex • Machines + Raiders • Extracts close over time</div>
     </div>
     <div class="chars" id="char-list"></div>
     <button class="btn" id="deploy-btn" disabled>DEPLOY</button>
@@ -105,13 +121,18 @@
     <div class="stat">Time <span id="timer">4:00</span></div>
   </div>
   <div id="message"></div>
+  <div id="extract-ui">
+    <div style="font-size:0.9rem;color:#38bdf8;font-weight:600">CALLING EXTRACT...</div>
+    <div class="extract-bar-bg"><div class="extract-bar" id="extract-bar"></div></div>
+    <div style="font-size:0.75rem;color:#94a3b8">Stay in the zone</div>
+  </div>
   <canvas id="game"></canvas>
 
   <script>
     const CHARACTERS = [
-      { id:'viper', name:'Viper', role:'Assault', icon:'🔫', color:'#22d3ee', hp:105, speed:3.3, damage:21, fireRate:0.17, desc:'Balanced all-rounder' },
-      { id:'ghost', name:'Ghost', role:'Scout', icon:'👁️', color:'#a78bfa', hp:78, speed:4.2, damage:15, fireRate:0.12, desc:'Very fast, lower HP' },
-      { id:'titan', name:'Titan', role:'Heavy', icon:'🛡️', color:'#f97316', hp:155, speed:2.5, damage:32, fireRate:0.32, desc:'Tanky & hard hitting' },
+      { id:'viper', name:'Viper', role:'Assault', icon:'🔫', color:'#22d3ee', hp:105, speed:3.3, damage:21, fireRate:0.17, desc:'Balanced fighter' },
+      { id:'ghost', name:'Ghost', role:'Scout', icon:'👁️', color:'#a78bfa', hp:78, speed:4.2, damage:15, fireRate:0.12, desc:'Very fast' },
+      { id:'titan', name:'Titan', role:'Heavy', icon:'🛡️', color:'#f97316', hp:155, speed:2.5, damage:32, fireRate:0.32, desc:'High HP & damage' },
       { id:'raven', name:'Raven', role:'Specialist', icon:'⚡', color:'#34d399', hp:92, speed:3.7, damage:18, fireRate:0.13, desc:'High fire rate' }
     ];
 
@@ -120,6 +141,8 @@
     const deployBtn = document.getElementById('deploy-btn');
     const menu = document.getElementById('menu');
     const hud = document.getElementById('hud');
+    const extractUI = document.getElementById('extract-ui');
+    const extractBar = document.getElementById('extract-bar');
 
     CHARACTERS.forEach(c => {
       const card = document.createElement('div');
@@ -155,32 +178,36 @@
     resize();
     window.addEventListener('resize', resize);
 
-    const WORLD = { w: 3200, h: 2400 };
+    const WORLD = { w: 3400, h: 2500 };
     let state = 'menu';
     let player, enemies, bullets, crates, particles, walls, extractions;
     let keys = {}, mouse = { x:0, y:0, down:false };
     let loot = 0, timeLeft = 240, lastTime = 0, spawnTimer = 0;
+    let callingExtract = null; // the extract currently being called
+    let callProgress = 0;
+    const CALL_TIME = 7.5; // seconds to fully call extract
 
-    function showMsg(txt, dur=2000) {
+    function showMsg(txt, dur=2200) {
       messageEl.textContent = txt;
       messageEl.classList.add('show');
       setTimeout(() => messageEl.classList.remove('show'), dur);
     }
 
-    // Buildings / cover
     function createMap() {
       walls = [
-        // Central complex
-        {x:1400, y:900, w:400, h:40}, {x:1400, y:1400, w:400, h:40},
-        {x:1400, y:900, w:40, h:540}, {x:1760, y:900, w:40, h:540},
-        // Side structures
-        {x:600, y:500, w:280, h:35}, {x:600, y:500, w:35, h:220},
-        {x:2300, y:1600, w:300, h:35}, {x:2570, y:1400, w:35, h:235},
-        {x:900, y:1800, w:350, h:40}, {x:2000, y:450, w:40, h:280},
-        // Cover pillars
-        {x:1100, y:1100, w:50, h:50}, {x:1600, y:700, w:50, h:50},
-        {x:1900, y:1300, w:50, h:50}, {x:800, y:1400, w:55, h:55},
-        {x:2500, y:800, w:50, h:50}, {x:1200, y:1700, w:50, h:50}
+        // Central facility
+        {x:1450, y:950, w:450, h:38}, {x:1450, y:1450, w:450, h:38},
+        {x:1450, y:950, w:38, h:538}, {x:1862, y:950, w:38, h:538},
+        // Side buildings
+        {x:550, y:480, w:300, h:35}, {x:550, y:480, w:35, h:240},
+        {x:2400, y:1650, w:320, h:35}, {x:2690, y:1420, w:35, h:265},
+        {x:850, y:1850, w:380, h:40}, {x:2100, y:420, w:40, h:300},
+        {x:400, y:1200, w:200, h:35}, {x:2800, y:900, w:35, h:200},
+        // Cover blocks
+        {x:1100, y:1150, w:55, h:55}, {x:1650, y:750, w:55, h:55},
+        {x:1950, y:1350, w:55, h:55}, {x:750, y:1450, w:55, h:55},
+        {x:2550, y:850, w:55, h:55}, {x:1250, y:1750, w:55, h:55},
+        {x:1700, y:1100, w:50, h:50}, {x:900, y:800, w:50, h:50}
       ];
     }
 
@@ -197,50 +224,54 @@
 
       enemies = []; bullets = []; crates = []; particles = [];
       loot = 0; timeLeft = 240; spawnTimer = 0;
+      callingExtract = null; callProgress = 0;
       createMap();
 
-      // Crates
-      for (let i=0; i<26; i++) {
+      // Crates (higher value near center)
+      for (let i=0; i<28; i++) {
+        const nearCenter = Math.random() > 0.55;
         crates.push({
-          x: 200 + Math.random()*(WORLD.w-400),
-          y: 200 + Math.random()*(WORLD.h-400),
-          r: 18, looted: false,
-          value: 20 + Math.floor(Math.random()*90)
+          x: nearCenter ? 1100 + Math.random()*1200 : 200 + Math.random()*(WORLD.w-400),
+          y: nearCenter ? 800 + Math.random()*900 : 200 + Math.random()*(WORLD.h-400),
+          r: 17, looted: false,
+          value: nearCenter ? 45 + Math.floor(Math.random()*70) : 18 + Math.floor(Math.random()*40)
         });
       }
 
-      // Extraction points
+      // Extraction points with close times
       extractions = [
-        {x: 280, y: 280, r: 70},
-        {x: WORLD.w-300, y: 320, r: 70},
-        {x: WORLD.w/2, y: WORLD.h-280, r: 70},
-        {x: 400, y: WORLD.h-350, r: 65}
+        { x: 300, y: 300, r: 68, closeAt: 180, closed: false, label: 'A' },
+        { x: WORLD.w-320, y: 350, r: 68, closeAt: 120, closed: false, label: 'B' },
+        { x: WORLD.w/2, y: WORLD.h-300, r: 68, closeAt: 60, closed: false, label: 'C' },
+        { x: 380, y: WORLD.h-380, r: 65, closeAt: 30, closed: false, label: 'D' }
       ];
 
-      for (let i=0; i<11; i++) spawnEnemy();
+      for (let i=0; i<10; i++) spawnEnemy();
 
       state = 'playing';
       menu.classList.add('hidden');
       hud.style.display = 'flex';
+      extractUI.classList.remove('show');
       updateUI();
-      showMsg(`${c.name} deployed • Sector 9`, 2600);
+      showMsg(`${c.name} deployed • Call extract with E when near`, 3000);
     }
 
-    function spawnEnemy() {
+    function spawnEnemy(forceRaider = false) {
       let x, y;
       do {
         x = Math.random()*WORLD.w;
         y = Math.random()*WORLD.h;
-      } while (Math.hypot(x-player.x, y-player.y) < 450);
+      } while (Math.hypot(x-player.x, y-player.y) < 480);
 
-      const isRaider = Math.random() > 0.5;
+      const isRaider = forceRaider || Math.random() > 0.48;
       enemies.push({
         x, y, r: isRaider ? 13 : 16,
-        hp: isRaider ? 50 : 75,
-        speed: isRaider ? 2.3 + Math.random()*0.7 : 1.6 + Math.random()*0.6,
-        angle: 0, shootCd: Math.random()*1.2,
-        type: isRaider ? 'raider' : (Math.random()>0.65 ? 'heavy' : 'machine'),
-        color: isRaider ? '#f472b6' : (Math.random()>0.65 ? '#a78bfa' : '#ef4444')
+        hp: isRaider ? 52 : 78,
+        speed: isRaider ? 2.4 + Math.random()*0.7 : 1.55 + Math.random()*0.55,
+        angle: 0, shootCd: Math.random()*1.3,
+        type: isRaider ? 'raider' : (Math.random()>0.7 ? 'heavy' : 'machine'),
+        color: isRaider ? '#f472b6' : (Math.random()>0.7 ? '#a78bfa' : '#ef4444'),
+        alerted: false
       });
     }
 
@@ -252,7 +283,6 @@
       timerEl.textContent = `${m}:${s.toString().padStart(2,'0')}`;
     }
 
-    // Collision with walls
     function collidesWall(x, y, r) {
       for (const w of walls) {
         if (x + r > w.x && x - r < w.x + w.w && y + r > w.y && y - r < w.y + w.h) return true;
@@ -260,9 +290,21 @@
       return false;
     }
 
+    function makeNoise(x, y, radius) {
+      for (const e of enemies) {
+        if (Math.hypot(e.x - x, e.y - y) < radius) {
+          e.alerted = true;
+        }
+      }
+    }
+
     // Input
-    window.addEventListener('keydown', e => { keys[e.code]=true; if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault(); });
-    window.addEventListener('keyup', e => keys[e.code]=false);
+    window.addEventListener('keydown', e => {
+      keys[e.code] = true;
+      if (['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
+      if (e.code === 'KeyE' && state === 'playing') tryCallExtract();
+    });
+    window.addEventListener('keyup', e => keys[e.code] = false);
     canvas.addEventListener('mousemove', e => {
       const rect = canvas.getBoundingClientRect();
       mouse.x = e.clientX - rect.left; mouse.y = e.clientY - rect.top;
@@ -282,6 +324,21 @@
     canvas.addEventListener('touchend', () => mouse.down = false);
     deployBtn.onclick = initGame;
 
+    function tryCallExtract() {
+      if (callingExtract) return;
+      for (const ex of extractions) {
+        if (ex.closed) continue;
+        if (Math.hypot(player.x - ex.x, player.y - ex.y) < ex.r - 8) {
+          callingExtract = ex;
+          callProgress = 0;
+          extractUI.classList.add('show');
+          makeNoise(ex.x, ex.y, 520); // loud call
+          showMsg('Extract called! Hold position...', 1800);
+          return;
+        }
+      }
+    }
+
     function particlesAt(x, y, col, n=8) {
       for (let i=0; i<n; i++) {
         particles.push({ x, y, vx:(Math.random()-0.5)*7, vy:(Math.random()-0.5)*7, life:1, color:col });
@@ -290,10 +347,27 @@
 
     function update(dt) {
       if (state !== 'playing') return;
-      timeLeft -= dt;
-      if (timeLeft <= 0) { endGame(false, 'Zone collapsed.'); return; }
 
-      // Move
+      timeLeft -= dt;
+      if (timeLeft <= 0) {
+        endGame(false, 'Zone collapsed. Orbital strike incoming.');
+        return;
+      }
+
+      // Close extracts over time
+      for (const ex of extractions) {
+        if (!ex.closed && timeLeft <= ex.closeAt) {
+          ex.closed = true;
+          if (callingExtract === ex) {
+            callingExtract = null;
+            callProgress = 0;
+            extractUI.classList.remove('show');
+            showMsg('This extract just closed!', 2000);
+          }
+        }
+      }
+
+      // Movement
       let dx=0, dy=0;
       if (keys['KeyW']||keys['ArrowUp']) dy-=1;
       if (keys['KeyS']||keys['ArrowDown']) dy+=1;
@@ -321,6 +395,26 @@
           life: 1.0, from: true, dmg: player.damage
         });
         player.shootCd = player.fireRate;
+        makeNoise(player.x, player.y, 380); // shooting makes noise
+      }
+
+      // Calling extract progress
+      if (callingExtract) {
+        const dist = Math.hypot(player.x - callingExtract.x, player.y - callingExtract.y);
+        if (dist > callingExtract.r - 5 || callingExtract.closed) {
+          // Cancelled
+          callingExtract = null;
+          callProgress = 0;
+          extractUI.classList.remove('show');
+          showMsg('Extract cancelled', 1500);
+        } else {
+          callProgress += dt;
+          extractBar.style.width = Math.min(100, (callProgress / CALL_TIME) * 100) + '%';
+          if (callProgress >= CALL_TIME) {
+            endGame(true, `Extracted successfully with ${loot} loot!`);
+            return;
+          }
+        }
       }
 
       // Bullets
@@ -341,11 +435,12 @@
             const e = enemies[j];
             if (Math.hypot(b.x-e.x, b.y-e.y) < e.r+4) {
               e.hp -= b.dmg;
+              e.alerted = true;
               particlesAt(e.x, e.y, '#22d3ee', 5);
               bullets.splice(i,1);
               if (e.hp <= 0) {
                 particlesAt(e.x, e.y, '#fbbf24', 11);
-                loot += e.type==='raider' ? 28 : 16;
+                loot += e.type==='raider' ? 30 : 16;
                 enemies.splice(j,1);
               }
               break;
@@ -354,30 +449,40 @@
         }
       }
 
-      // Enemies
+      // Enemy AI
       for (const e of enemies) {
         const dist = Math.hypot(player.x-e.x, player.y-e.y);
         e.angle = Math.atan2(player.y-e.y, player.x-e.x);
-        if (dist > 65) {
-          const nx = e.x + Math.cos(e.angle)*e.speed;
-          const ny = e.y + Math.sin(e.angle)*e.speed;
-          if (!collidesWall(nx, e.y, e.r)) e.x = nx;
-          if (!collidesWall(e.x, ny, e.r)) e.y = ny;
-        }
-        e.shootCd -= dt;
-        if (dist < 500 && e.shootCd <= 0) {
-          const spd = e.type==='raider' ? 9 : 7.2;
-          bullets.push({
-            x: e.x+Math.cos(e.angle)*15, y: e.y+Math.sin(e.angle)*15,
-            vx: Math.cos(e.angle)*spd, vy: Math.sin(e.angle)*spd,
-            life: 1.3, from: false
-          });
-          e.shootCd = e.type==='heavy' ? 0.9 : (e.type==='raider' ? 0.65 : 1.1);
+
+        const aggroRange = e.alerted ? 700 : (e.type === 'raider' ? 320 : 260);
+        if (dist < aggroRange) {
+          e.alerted = true;
+          if (dist > 60) {
+            const nx = e.x + Math.cos(e.angle)*e.speed;
+            const ny = e.y + Math.sin(e.angle)*e.speed;
+            if (!collidesWall(nx, e.y, e.r)) e.x = nx;
+            if (!collidesWall(e.x, ny, e.r)) e.y = ny;
+          }
+          e.shootCd -= dt;
+          if (dist < 480 && e.shootCd <= 0) {
+            const spd = e.type==='raider' ? 9.2 : 7.3;
+            bullets.push({
+              x: e.x+Math.cos(e.angle)*15, y: e.y+Math.sin(e.angle)*15,
+              vx: Math.cos(e.angle)*spd, vy: Math.sin(e.angle)*spd,
+              life: 1.3, from: false
+            });
+            e.shootCd = e.type==='heavy' ? 0.85 : (e.type==='raider' ? 0.62 : 1.05);
+          }
         }
       }
 
+      // Spawn more pressure late game
       spawnTimer += dt;
-      if (spawnTimer > 7 && enemies.length < 15) { spawnEnemy(); spawnTimer = 0; }
+      const spawnRate = timeLeft < 90 ? 5.5 : 8;
+      if (spawnTimer > spawnRate && enemies.length < 16) {
+        spawnEnemy(timeLeft < 80);
+        spawnTimer = 0;
+      }
 
       // Loot
       for (const c of crates) {
@@ -385,14 +490,6 @@
           c.looted = true; loot += c.value;
           particlesAt(c.x, c.y, '#fbbf24', 9);
           showMsg(`+${c.value} loot`);
-        }
-      }
-
-      // Extract
-      for (const ex of extractions) {
-        if (Math.hypot(player.x-ex.x, player.y-ex.y) < ex.r-15) {
-          endGame(true, `Extracted with ${loot} loot!`);
-          return;
         }
       }
 
@@ -407,6 +504,7 @@
     function endGame(win, msg) {
       state = win ? 'win' : 'dead';
       hud.style.display = 'none';
+      extractUI.classList.remove('show');
       menu.classList.remove('hidden');
       menu.innerHTML = `
         <h1 style="background:linear-gradient(90deg,${win?'#34d399,#22d3ee':'#f87171,#fb7185'});-webkit-background-clip:text;-webkit-text-fill-color:transparent">
@@ -427,13 +525,13 @@
       ctx.save();
       ctx.translate(-camX, -camY);
 
-      // Floor grid
-      ctx.strokeStyle = 'rgba(30,55,100,0.3)';
+      // Grid
+      ctx.strokeStyle = 'rgba(30,55,100,0.28)';
       ctx.lineWidth = 1;
       for (let x=0; x<WORLD.w; x+=120) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,WORLD.h); ctx.stroke(); }
       for (let y=0; y<WORLD.h; y+=120) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(WORLD.w,y); ctx.stroke(); }
 
-      // Walls / buildings
+      // Walls
       for (const w of walls) {
         ctx.fillStyle = '#1e293b';
         ctx.fillRect(w.x, w.y, w.w, w.h);
@@ -444,19 +542,41 @@
 
       // Extractions
       for (const ex of extractions) {
+        if (ex.closed) {
+          ctx.beginPath();
+          ctx.arc(ex.x, ex.y, ex.r, 0, Math.PI*2);
+          ctx.fillStyle = 'rgba(100,100,100,0.15)';
+          ctx.fill();
+          ctx.strokeStyle = '#64748b';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([6,6]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = '#64748b';
+          ctx.font = 'bold 12px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('CLOSED', ex.x, ex.y - ex.r - 8);
+          continue;
+        }
+        const isCalling = callingExtract === ex;
         ctx.beginPath();
         ctx.arc(ex.x, ex.y, ex.r, 0, Math.PI*2);
-        ctx.fillStyle = 'rgba(56,189,248,0.13)';
+        ctx.fillStyle = isCalling ? 'rgba(34,211,238,0.22)' : 'rgba(56,189,248,0.12)';
         ctx.fill();
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 3;
-        ctx.setLineDash([10,7]);
+        ctx.strokeStyle = isCalling ? '#22d3ee' : '#38bdf8';
+        ctx.lineWidth = isCalling ? 4 : 3;
+        ctx.setLineDash(isCalling ? [] : [10,7]);
         ctx.stroke();
         ctx.setLineDash([]);
-        ctx.fillStyle = '#38bdf8';
+        ctx.fillStyle = isCalling ? '#22d3ee' : '#38bdf8';
         ctx.font = 'bold 12px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText('EXTRACT', ex.x, ex.y - ex.r - 8);
+        ctx.fillText(isCalling ? 'CALLING...' : `EXTRACT ${ex.label}`, ex.x, ex.y - ex.r - 8);
+        if (!isCalling) {
+          ctx.font = '11px sans-serif';
+          ctx.fillStyle = '#94a3b8';
+          ctx.fillText('Press E', ex.x, ex.y + 5);
+        }
       }
 
       // Crates
@@ -519,15 +639,15 @@
       ctx.restore();
 
       // Minimap
-      const mm = 125, mx = W-mm-12, my = H-mm-12;
+      const mm = 128, mx = W-mm-12, my = H-mm-12;
       ctx.fillStyle = 'rgba(5,8,15,0.92)';
       ctx.fillRect(mx, my, mm, mm);
       ctx.strokeStyle = '#1e293b';
       ctx.strokeRect(mx, my, mm, mm);
       const sx = mm/WORLD.w, sy = mm/WORLD.h;
 
-      ctx.fillStyle = '#38bdf8';
       for (const ex of extractions) {
+        ctx.fillStyle = ex.closed ? '#64748b' : '#38bdf8';
         ctx.beginPath(); ctx.arc(mx+ex.x*sx, my+ex.y*sy, 3.5, 0, Math.PI*2); ctx.fill();
       }
       ctx.fillStyle = '#fbbf24';
